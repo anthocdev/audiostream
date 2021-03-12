@@ -1,13 +1,17 @@
 import YoutubeStream from "./helpers/youtubestream";
 import { Lame } from "node-lame";
+import fs from "fs";
+
+var decoder = new Lame({ output: "./audio/demo.wav" });
+
+var testfile = fs.createWriteStream("test.mp3");
 
 var stream = new YoutubeStream(
-  "https://www.youtube.com/watch?v=RPfCZhvj1Ng"
+  "https://www.youtube.com/watch?v=cIjlhhcSir4"
 ).getStream();
 
-stream.pipe(new Lame({ output: "./audio/kek.wav" }).setBuffer(stream));
-// var activestream = stream.getStream().pipe(new Lame({output:"./audio/kek.wav"}).setBuffer());
+stream.pipe(testfile);
 
-// activestream.on("data", (chunk: any) => {
-//   console.log(chunk);
-// });
+stream.on("end", () => {
+  console.log("stream end");
+});
