@@ -1,17 +1,14 @@
-import YoutubeStream from "./helpers/youtubestream";
-import { Lame } from "node-lame";
-import fs from "fs";
+import express from "express";
+import routes from "./routes";
 
-var decoder = new Lame({ output: "./audio/demo.wav" });
+const server = express();
 
-var testfile = fs.createWriteStream("test.mp3");
-
-var stream = new YoutubeStream(
-  "https://www.youtube.com/watch?v=cIjlhhcSir4"
-).getStream();
-
-stream.pipe(testfile);
-
-stream.on("end", () => {
-  console.log("stream end");
+server.get("/", (req, res) => {
+  res.send("API UP");
 });
+
+server.use("/api", routes);
+
+server.listen(3000, () => console.log("Running on Port 3000"));
+
+export default server;
