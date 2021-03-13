@@ -1,17 +1,27 @@
-import YoutubeStream from "../services/youtubestream";
+import { NextFunction, Request, Response } from "express";
+import { getYoutubeStream } from "../services/youtubestream";
 
-const getStream = async (req: any, res: any, next: any) => {
-  //   const { video_url } = req.body;
-
-  var stream = new YoutubeStream(
-    "https://www.youtube.com/watch?v=JtabQvTbmhs"
-  ).getStream();
-
-  stream.pipe(res);
-
-  stream.on("end", () => {
-    console.log("stream end");
-  });
+/* Returns audio track of any YouTube video */
+const getStream = async (req: Request, res: Response, next: NextFunction) => {
+  const url = req.body?.url; //YouTube video URL for streaming
+  try {
+    var stream = getYoutubeStream(url)
+      .on("error", (err) => {
+        console.log(err);
+        res.status(404).send(err);
+      })
+      .once("data", function () {
+        res.set("content-type", "audio/mp3");
+        res.set("accept-ranges", "bytes");
+      })
+      .on("data", (chunk) => {
+        res.write(chunk);
+      })
+      .on("end", res.end.bind(res)); //Finished chunk response
+  } catch (ex) {
+    console.log(ex);
+    res.status(500).send(ex);
+  }
 };
 
 export default { getStream };

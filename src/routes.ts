@@ -4,6 +4,6 @@ import YoutubeStreamController from "./controllers/stream";
 /* List of routes */
 const router = express.Router();
 
-router.get("/ytbstream", YoutubeStreamController.getStream);
+router.post("/ytbstream", YoutubeStreamController.getStream);
 
 export default router;
